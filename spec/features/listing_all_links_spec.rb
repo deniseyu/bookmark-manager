@@ -7,10 +7,10 @@ feature "User browses the list of links" do
                 :title => "Makers Academy",
                 :tags => [Tag.first_or_create(:text => 'education')])
     Link.create(:url => "http://www.google.com",
-                :title => "Google", 
+                :title => "The Google", 
                 :tags => [Tag.first_or_create(:text => 'search')])
     Link.create(:url => "http://www.bing.com", 
-                :title => "Bing",
+                :title => "The Bing",
                 :tags => [Tag.first_or_create(:text => 'search')])
     Link.create(:url => "http://www.code.org",
                 :title => "Code.org",
@@ -23,11 +23,12 @@ feature "User browses the list of links" do
   end
 
   scenario "filtered by a tag" do 
-    visit '/tags/search'
+    visit '/tags/puppies'
     expect(page).not_to have_content("Makers Academy")
     expect(page).not_to have_content("Code.org")
-    expect(page).not_to have_content("Google")
-    expect(page).not_to have_content("Bing")
+    expect(page).not_to have_content("The Bing")
+    expect(page).not_to have_content("The Google")
+
   end
 
 
