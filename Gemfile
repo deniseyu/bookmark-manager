@@ -8,6 +8,7 @@ gem 'sinatra'
 gem 'bcrypt-ruby'
 gem 'rack-flash3'
 gem 'sinatra-partial'
+gem 'mailgun-ruby'
 
 
 group :development, :test do

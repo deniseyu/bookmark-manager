@@ -5,6 +5,7 @@ require 'sinatra/partial'
 require_relative 'models/link'
 require_relative 'models/tag'
 require_relative 'models/user'
+require_relative 'models/mailer'
 require_relative 'helpers/helper'
 require_relative 'datamapper_helper'
 
