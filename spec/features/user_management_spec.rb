@@ -42,25 +42,40 @@ feature "User loses password" do
     visit '/sessions/new'
     click_link 'Forgotten password?'
     fill_in 'email', :with => user.email
+    allow(RestClient).to receive(:post)
     click_button 'Submit'
     expect(page).to have_content 'Your password is on its way!'
   end
 
-  # scenario "should receive an email" do
-  #   User.any_instance.stub(:generate_token).and_return('hi')
-  #   visit '/users/lost_password'
-  #   fill_in 'email', :with => user.email
-  #   click_button 'Submit'
-  #   expect(user.password_token).to eq 'hi'
-  #   expect(Time.parse(user.password_token_timestamp)).to be_within(10).of Time.now
-  # end
+  scenario 'has to enter the unique token from the email ' do
+    visit '/users/reset_password'
+    user.update_token
+    fill_in 'email', :with => user.email
+    fill_in 'password_token', :with => user.password_token
+    click_button 'Submit'
+    expect(page).to have_content 'Please pick a new password.'
+  end
 
-  # scenario "and receives a reset key via email" do
-  #   visit '/users/lost_password'
-  #   fill_in 'email', :with => email
-  #   click_button 'Submit'
-  #   expect(user.send_simple_message).to
-  # end
+  scenario 'cannot reset password with an incorrect token' do
+    visit '/users/reset_password'
+    user.update_token
+    fill_in 'email', :with => user.email
+    fill_in 'password_token', :with => 'banana'
+    click_button 'Submit'
+    expect(page).to have_content 'The password token is incorrect.'
+  end
 
+  scenario 'can reset his password after being authenticated' do
+    visit '/users/reset_password'
+    user.update_token
+    fill_in 'email', :with => user.email
+    fill_in 'password_token', :with => user.password_token
+    click_button 'Submit'
+    fill_in 'email', :with => user.email
+    fill_in 'password', :with => 'thisismynewpassword'
+    fill_in 'password_confirmation', :with => 'thisismynewpassword'
+    click_button 'Submit'
+    expect(page).to have_content 'You have successfully set a new password'
+  end
 
 end

@@ -20,7 +20,7 @@ get '/users/lost_password' do
   erb :'users/lost_password'
 end
 
-post '/users/reset_password' do
+post '/users/lost_password' do
   user = User.first(:email => params[:email])
   user.update_token
   user.send_email
@@ -28,13 +28,30 @@ post '/users/reset_password' do
   redirect '/'
 end
 
-get '/users/choose_new_password/:token' do
-  user = User.first(:password_token => params[:token])
-  erb :reset_password
+get '/users/reset_password' do
+  erb :"users/reset_password"
 end
 
-post '/users/choose_new_password' do
-  user = User.first(:password_token => token)
+post '/users/reset_password' do
+  user = User.first(:email => params[:email])
+  if params[:password_token] == user.password_token
+    redirect '/users/set_new_password'
+  else
+    flash[:notice] = 'The password token is incorrect.'
+    redirect '/users/reset_password'
+  end
+end
+
+get '/users/set_new_password' do
+  erb :"users/set_new_password"
+end
+
+post '/users/set_new_password' do
+  user = User.first(:email => params[:email])
+  user.update(:password => params[:password],
+              :password_confirmation => params[:password_confirmation])
+  flash[:notice] = 'You have successfully set a new password'
+  redirect '/sessions/new'
 end
 
 
